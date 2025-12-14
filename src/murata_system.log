@@ -1,0 +1,364 @@
+2025-12-14 15:49:39,573 - INFO - [WDM] - ====== WebDriver manager ======
+2025-12-14 15:49:42,788 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 15:49:44,425 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 15:49:45,731 - INFO - [WDM] - There is no [win64] chromedriver "134.0.6998.165" for browser google-chrome "134.0.6998" in cache
+2025-12-14 15:49:45,731 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 15:49:46,559 - INFO - [WDM] - WebDriver version 134.0.6998.165 selected
+2025-12-14 15:49:46,563 - INFO - [WDM] - Modern chrome version https://storage.googleapis.com/chrome-for-testing-public/134.0.6998.165/win32/chromedriver-win32.zip
+2025-12-14 15:49:46,565 - INFO - [WDM] - About to download new driver from https://storage.googleapis.com/chrome-for-testing-public/134.0.6998.165/win32/chromedriver-win32.zip
+2025-12-14 15:49:47,479 - INFO - [WDM] - Driver downloading response is 200
+2025-12-14 15:49:49,481 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 15:49:51,172 - INFO - [WDM] - Driver has been saved in cache [C:\Users\PC_ASUS\.wdm\drivers\chromedriver\win64\134.0.6998.165]
+2025-12-14 15:49:54,953 - INFO - [MedicalRegistryScraper] - Accessing https://tracuu.medinet.org.vn/...
+2025-12-14 15:51:24,346 - INFO - [WDM] - ====== WebDriver manager ======
+2025-12-14 15:51:26,040 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 15:51:26,615 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 15:51:26,894 - INFO - [WDM] - Driver [C:\Users\PC_ASUS\.wdm\drivers\chromedriver\win64\134.0.6998.165\chromedriver-win32/chromedriver.exe] found in cache
+2025-12-14 15:51:31,843 - INFO - [MedicalRegistryScraper] - Accessing https://tracuu.medinet.org.vn/...
+2025-12-14 15:51:33,908 - INFO - [MedicalRegistryScraper] - Scraping page... Current records: 0
+2025-12-14 15:51:37,254 - ERROR - [MedicalRegistryScraper] - Error during scraping: Message: element click intercepted: Element is not clickable at point (1877, 2731)
+  (Session info: chrome=134.0.6998.118); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#elementclickinterceptedexception
+Stacktrace:
+	GetHandleVerifier [0x011EC7F3+24435]
+	(No symbol) [0x01172074]
+	(No symbol) [0x010406E3]
+	(No symbol) [0x0108EDD0]
+	(No symbol) [0x0108D174]
+	(No symbol) [0x0108AD17]
+	(No symbol) [0x0108A001]
+	(No symbol) [0x0107E685]
+	(No symbol) [0x010AD7BC]
+	(No symbol) [0x0107E114]
+	(No symbol) [0x010ADA34]
+	(No symbol) [0x010CF20A]
+	(No symbol) [0x010AD5B6]
+	(No symbol) [0x0107C54F]
+	(No symbol) [0x0107D894]
+	GetHandleVerifier [0x014F70A3+3213347]
+	GetHandleVerifier [0x0150B0C9+3295305]
+	GetHandleVerifier [0x0150558C+3271948]
+	GetHandleVerifier [0x01287360+658144]
+	(No symbol) [0x0117B27D]
+	(No symbol) [0x01178208]
+	(No symbol) [0x011783A9]
+	(No symbol) [0x0116AAC0]
+	BaseThreadInitThunk [0x770B5D49+25]
+	RtlInitializeExceptionChain [0x7761D5DB+107]
+	RtlGetAppContainerNamedObjectPath [0x7761D561+561]
+
+2025-12-14 15:52:41,456 - INFO - [WDM] - ====== WebDriver manager ======
+2025-12-14 15:52:43,201 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 15:52:44,744 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 15:52:45,428 - INFO - [WDM] - Driver [C:\Users\PC_ASUS\.wdm\drivers\chromedriver\win64\134.0.6998.165\chromedriver-win32/chromedriver.exe] found in cache
+2025-12-14 15:52:48,062 - INFO - [MedicalRegistryScraper] - Accessing https://tracuu.medinet.org.vn/...
+2025-12-14 15:52:51,116 - INFO - [MedicalRegistryScraper] - Scraping page... Current records: 0
+2025-12-14 15:52:56,468 - INFO - [MedicalRegistryScraper] - Scraping page... Current records: 30
+2025-12-14 15:54:00,366 - INFO - [WDM] - ====== WebDriver manager ======
+2025-12-14 15:54:02,709 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 15:54:04,259 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 15:54:05,539 - INFO - [WDM] - Driver [C:\Users\PC_ASUS\.wdm\drivers\chromedriver\win64\134.0.6998.165\chromedriver-win32/chromedriver.exe] found in cache
+2025-12-14 15:54:08,027 - INFO - [MedicalRegistryScraper] - Accessing https://tracuu.medinet.org.vn/...
+2025-12-14 15:54:11,083 - INFO - [MedicalRegistryScraper] - Scraping page... Current records: 0
+2025-12-14 15:54:16,551 - INFO - [MedicalRegistryScraper] - Scraping page... Current records: 30
+2025-12-14 15:54:22,675 - INFO - [MedicalRegistryScraper] - Knowledge base saved to murata_knowledge_base.xlsx
+2025-12-14 15:57:14,397 - INFO - [WDM] - ====== WebDriver manager ======
+2025-12-14 15:57:16,467 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 15:57:16,840 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 15:57:17,425 - INFO - [WDM] - Driver [C:\Users\PC_ASUS\.wdm\drivers\chromedriver\win64\134.0.6998.165\chromedriver-win32/chromedriver.exe] found in cache
+2025-12-14 15:57:19,083 - INFO - [AdViolationMonitor] - Starting scan for keyword: 'cam kết chữa khỏi'
+2025-12-14 15:57:29,639 - ERROR - [AdViolationMonitor] - Error initiating search: Message: 
+Stacktrace:
+	GetHandleVerifier [0x011EC7F3+24435]
+	(No symbol) [0x01172074]
+	(No symbol) [0x010406E3]
+	(No symbol) [0x01088B39]
+	(No symbol) [0x01088E8B]
+	(No symbol) [0x010D1AC2]
+	(No symbol) [0x010AD804]
+	(No symbol) [0x010CF20A]
+	(No symbol) [0x010AD5B6]
+	(No symbol) [0x0107C54F]
+	(No symbol) [0x0107D894]
+	GetHandleVerifier [0x014F70A3+3213347]
+	GetHandleVerifier [0x0150B0C9+3295305]
+	GetHandleVerifier [0x0150558C+3271948]
+	GetHandleVerifier [0x01287360+658144]
+	(No symbol) [0x0117B27D]
+	(No symbol) [0x01178208]
+	(No symbol) [0x011783A9]
+	(No symbol) [0x0116AAC0]
+	BaseThreadInitThunk [0x770B5D49+25]
+	RtlInitializeExceptionChain [0x7761D5DB+107]
+	RtlGetAppContainerNamedObjectPath [0x7761D561+561]
+
+2025-12-14 15:57:29,639 - INFO - [AdViolationMonitor] - Starting scan for keyword: 'điều trị dứt điểm'
+2025-12-14 15:57:39,975 - ERROR - [AdViolationMonitor] - Error initiating search: Message: 
+Stacktrace:
+	GetHandleVerifier [0x011EC7F3+24435]
+	(No symbol) [0x01172074]
+	(No symbol) [0x010406E3]
+	(No symbol) [0x01088B39]
+	(No symbol) [0x01088E8B]
+	(No symbol) [0x010D1AC2]
+	(No symbol) [0x010AD804]
+	(No symbol) [0x010CF20A]
+	(No symbol) [0x010AD5B6]
+	(No symbol) [0x0107C54F]
+	(No symbol) [0x0107D894]
+	GetHandleVerifier [0x014F70A3+3213347]
+	GetHandleVerifier [0x0150B0C9+3295305]
+	GetHandleVerifier [0x0150558C+3271948]
+	GetHandleVerifier [0x01287360+658144]
+	(No symbol) [0x0117B27D]
+	(No symbol) [0x01178208]
+	(No symbol) [0x011783A9]
+	(No symbol) [0x0116AAC0]
+	BaseThreadInitThunk [0x770B5D49+25]
+	RtlInitializeExceptionChain [0x7761D5DB+107]
+	RtlGetAppContainerNamedObjectPath [0x7761D561+561]
+
+2025-12-14 15:57:39,975 - INFO - [AdViolationMonitor] - Starting scan for keyword: 'nhà tôi 3 đời'
+2025-12-14 15:57:51,503 - ERROR - [AdViolationMonitor] - Error initiating search: Message: 
+Stacktrace:
+	GetHandleVerifier [0x011EC7F3+24435]
+	(No symbol) [0x01172074]
+	(No symbol) [0x010406E3]
+	(No symbol) [0x01088B39]
+	(No symbol) [0x01088E8B]
+	(No symbol) [0x010D1AC2]
+	(No symbol) [0x010AD804]
+	(No symbol) [0x010CF20A]
+	(No symbol) [0x010AD5B6]
+	(No symbol) [0x0107C54F]
+	(No symbol) [0x0107D894]
+	GetHandleVerifier [0x014F70A3+3213347]
+	GetHandleVerifier [0x0150B0C9+3295305]
+	GetHandleVerifier [0x0150558C+3271948]
+	GetHandleVerifier [0x01287360+658144]
+	(No symbol) [0x0117B27D]
+	(No symbol) [0x01178208]
+	(No symbol) [0x011783A9]
+	(No symbol) [0x0116AAC0]
+	BaseThreadInitThunk [0x770B5D49+25]
+	RtlInitializeExceptionChain [0x7761D5DB+107]
+	RtlGetAppContainerNamedObjectPath [0x7761D561+561]
+
+2025-12-14 15:57:51,503 - INFO - [AdViolationMonitor] - No ads found to report.
+2025-12-14 15:59:36,184 - INFO - [WDM] - ====== WebDriver manager ======
+2025-12-14 15:59:37,945 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 15:59:38,215 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 15:59:38,573 - INFO - [WDM] - Driver [C:\Users\PC_ASUS\.wdm\drivers\chromedriver\win64\134.0.6998.165\chromedriver-win32/chromedriver.exe] found in cache
+2025-12-14 15:59:39,920 - INFO - [AdViolationMonitor] - Starting scan for keyword: 'cam kết chữa khỏi'
+2025-12-14 15:59:50,500 - ERROR - [AdViolationMonitor] - Error initiating search: Message: 
+Stacktrace:
+	GetHandleVerifier [0x011EC7F3+24435]
+	(No symbol) [0x01172074]
+	(No symbol) [0x010406E3]
+	(No symbol) [0x01088B39]
+	(No symbol) [0x01088E8B]
+	(No symbol) [0x010D1AC2]
+	(No symbol) [0x010AD804]
+	(No symbol) [0x010CF20A]
+	(No symbol) [0x010AD5B6]
+	(No symbol) [0x0107C54F]
+	(No symbol) [0x0107D894]
+	GetHandleVerifier [0x014F70A3+3213347]
+	GetHandleVerifier [0x0150B0C9+3295305]
+	GetHandleVerifier [0x0150558C+3271948]
+	GetHandleVerifier [0x01287360+658144]
+	(No symbol) [0x0117B27D]
+	(No symbol) [0x01178208]
+	(No symbol) [0x011783A9]
+	(No symbol) [0x0116AAC0]
+	BaseThreadInitThunk [0x770B5D49+25]
+	RtlInitializeExceptionChain [0x7761D5DB+107]
+	RtlGetAppContainerNamedObjectPath [0x7761D561+561]
+
+2025-12-14 15:59:50,501 - INFO - [AdViolationMonitor] - Starting scan for keyword: 'điều trị dứt điểm'
+2025-12-14 16:00:01,629 - ERROR - [AdViolationMonitor] - Error initiating search: Message: 
+Stacktrace:
+	GetHandleVerifier [0x011EC7F3+24435]
+	(No symbol) [0x01172074]
+	(No symbol) [0x010406E3]
+	(No symbol) [0x01088B39]
+	(No symbol) [0x01088E8B]
+	(No symbol) [0x010D1AC2]
+	(No symbol) [0x010AD804]
+	(No symbol) [0x010CF20A]
+	(No symbol) [0x010AD5B6]
+	(No symbol) [0x0107C54F]
+	(No symbol) [0x0107D894]
+	GetHandleVerifier [0x014F70A3+3213347]
+	GetHandleVerifier [0x0150B0C9+3295305]
+	GetHandleVerifier [0x0150558C+3271948]
+	GetHandleVerifier [0x01287360+658144]
+	(No symbol) [0x0117B27D]
+	(No symbol) [0x01178208]
+	(No symbol) [0x011783A9]
+	(No symbol) [0x0116AAC0]
+	BaseThreadInitThunk [0x770B5D49+25]
+	RtlInitializeExceptionChain [0x7761D5DB+107]
+	RtlGetAppContainerNamedObjectPath [0x7761D561+561]
+
+2025-12-14 16:00:01,629 - INFO - [AdViolationMonitor] - Starting scan for keyword: 'nhà tôi 3 đời'
+2025-12-14 16:00:12,900 - ERROR - [AdViolationMonitor] - Error initiating search: Message: 
+Stacktrace:
+	GetHandleVerifier [0x011EC7F3+24435]
+	(No symbol) [0x01172074]
+	(No symbol) [0x010406E3]
+	(No symbol) [0x01088B39]
+	(No symbol) [0x01088E8B]
+	(No symbol) [0x010D1AC2]
+	(No symbol) [0x010AD804]
+	(No symbol) [0x010CF20A]
+	(No symbol) [0x010AD5B6]
+	(No symbol) [0x0107C54F]
+	(No symbol) [0x0107D894]
+	GetHandleVerifier [0x014F70A3+3213347]
+	GetHandleVerifier [0x0150B0C9+3295305]
+	GetHandleVerifier [0x0150558C+3271948]
+	GetHandleVerifier [0x01287360+658144]
+	(No symbol) [0x0117B27D]
+	(No symbol) [0x01178208]
+	(No symbol) [0x011783A9]
+	(No symbol) [0x0116AAC0]
+	BaseThreadInitThunk [0x770B5D49+25]
+	RtlInitializeExceptionChain [0x7761D5DB+107]
+	RtlGetAppContainerNamedObjectPath [0x7761D561+561]
+
+2025-12-14 16:00:12,901 - INFO - [AdViolationMonitor] - No ads found to report.
+2025-12-14 16:01:36,016 - INFO - [WDM] - ====== WebDriver manager ======
+2025-12-14 16:01:37,664 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 16:01:37,964 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 16:01:38,270 - INFO - [WDM] - Driver [C:\Users\PC_ASUS\.wdm\drivers\chromedriver\win64\134.0.6998.165\chromedriver-win32/chromedriver.exe] found in cache
+2025-12-14 16:01:39,376 - INFO - [AdViolationMonitor] - Starting scan for keyword: 'cam kết chữa khỏi'
+2025-12-14 16:01:39,692 - INFO - [AdViolationMonitor] - Step 1: Opening Category Menu...
+2025-12-14 16:01:49,837 - WARNING - [AdViolationMonitor] - Could not click dropdown, maybe it's already open or different UI.
+2025-12-14 16:01:49,838 - INFO - [AdViolationMonitor] - Step 2: Selecting 'All Ads'...
+2025-12-14 16:01:57,229 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:02:03,133 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:02:08,445 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:02:13,015 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:02:17,485 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:02:23,368 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:02:27,448 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:02:32,039 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:02:36,407 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:02:42,341 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:02:47,440 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:02:52,874 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:02:57,129 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:03:02,199 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:03:08,033 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:03:13,924 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:03:20,100 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:03:24,619 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:03:30,492 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:03:35,297 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:03:41,223 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:03:46,099 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:03:52,723 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:03:58,555 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:04:03,815 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:04:09,526 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:04:15,088 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:04:20,331 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:04:26,202 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:04:31,692 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:04:37,214 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:04:42,410 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:04:46,820 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:04:51,238 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:04:57,187 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:05:02,655 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:05:08,776 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:05:14,011 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:05:18,513 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:05:23,540 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:05:29,160 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:05:35,406 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:05:40,527 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:05:46,683 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:05:51,359 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:05:56,258 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:06:01,976 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:06:06,438 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:06:11,631 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:06:17,410 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:06:21,923 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:06:26,696 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:06:31,608 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:06:36,441 - WARNING - [AdViolationMonitor] - No ad containers found via standard selectors.
+2025-12-14 16:09:14,078 - INFO - [WDM] - ====== WebDriver manager ======
+2025-12-14 16:09:15,923 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 16:09:16,292 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 16:09:16,613 - INFO - [WDM] - Driver [C:\Users\PC_ASUS\.wdm\drivers\chromedriver\win64\134.0.6998.165\chromedriver-win32/chromedriver.exe] found in cache
+2025-12-14 16:09:21,356 - INFO - [AdViolationMonitor] - Step 1: Trying to open 'Ad Category' menu...
+2025-12-14 16:09:21,842 - ERROR - [AdViolationMonitor] - Failed to click category button: Message: stale element reference: stale element not found in the current frame
+  (Session info: chrome=134.0.6998.118); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#staleelementreferenceexception
+Stacktrace:
+	GetHandleVerifier [0x011EC7F3+24435]
+	(No symbol) [0x01172074]
+	(No symbol) [0x010406E3]
+	(No symbol) [0x010470D7]
+	(No symbol) [0x0104935A]
+	(No symbol) [0x010493D7]
+	(No symbol) [0x0108ED02]
+	(No symbol) [0x0108CC16]
+	(No symbol) [0x0108AD17]
+	(No symbol) [0x0108A001]
+	(No symbol) [0x0107E685]
+	(No symbol) [0x010AD7BC]
+	(No symbol) [0x0107E114]
+	(No symbol) [0x010ADA34]
+	(No symbol) [0x010CF20A]
+	(No symbol) [0x010AD5B6]
+	(No symbol) [0x0107C54F]
+	(No symbol) [0x0107D894]
+	GetHandleVerifier [0x014F70A3+3213347]
+	GetHandleVerifier [0x0150B0C9+3295305]
+	GetHandleVerifier [0x0150558C+3271948]
+	GetHandleVerifier [0x01287360+658144]
+	(No symbol) [0x0117B27D]
+	(No symbol) [0x01178208]
+	(No symbol) [0x011783A9]
+	(No symbol) [0x0116AAC0]
+	BaseThreadInitThunk [0x770B5D49+25]
+	RtlInitializeExceptionChain [0x7761D5DB+107]
+	RtlGetAppContainerNamedObjectPath [0x7761D561+561]
+
+2025-12-14 16:09:21,843 - ERROR - [AdViolationMonitor] - Could not setup search. Aborting.
+2025-12-14 16:09:21,843 - INFO - [AdViolationMonitor] - No data to save.
+2025-12-14 16:09:29,605 - INFO - [WDM] - ====== WebDriver manager ======
+2025-12-14 16:09:31,728 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 16:09:32,284 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 16:09:33,074 - INFO - [WDM] - Driver [C:\Users\PC_ASUS\.wdm\drivers\chromedriver\win64\134.0.6998.165\chromedriver-win32/chromedriver.exe] found in cache
+2025-12-14 16:09:37,585 - INFO - [AdViolationMonitor] - Step 1: Trying to open 'Ad Category' menu...
+2025-12-14 16:09:39,630 - INFO - [AdViolationMonitor] - Step 2: Selecting 'All Ads'...
+2025-12-14 16:09:41,398 - INFO - [AdViolationMonitor] - Step 3: Searching for 'cam kết chữa khỏi'...
+2025-12-14 16:09:42,742 - INFO - [AdViolationMonitor] - Waiting 7s for results to load...
+2025-12-14 16:09:49,743 - INFO - [AdViolationMonitor] - Starting to scan results...
+2025-12-14 16:10:04,087 - INFO - [AdViolationMonitor] - Finished. Total ads found: 20
+2025-12-14 16:10:04,396 - INFO - [AdViolationMonitor] - Report saved to murata_violation_report.xlsx
+2025-12-14 16:12:37,931 - INFO - [WDM] - ====== WebDriver manager ======
+2025-12-14 16:12:39,846 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 16:12:40,500 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 16:12:41,120 - INFO - [WDM] - Driver [C:\Users\PC_ASUS\.wdm\drivers\chromedriver\win64\134.0.6998.165\chromedriver-win32/chromedriver.exe] found in cache
+2025-12-14 16:12:45,608 - INFO - [AdViolationMonitor] - Step 1: Trying to open 'Ad Category' menu...
+2025-12-14 16:12:47,465 - INFO - [AdViolationMonitor] - Step 2: Selecting 'All Ads'...
+2025-12-14 16:12:49,196 - INFO - [AdViolationMonitor] - Step 3: Searching for 'cam kết chữa khỏi'...
+2025-12-14 16:12:50,174 - INFO - [AdViolationMonitor] - Waiting 7s for results to load...
+2025-12-14 16:12:57,175 - INFO - [AdViolationMonitor] - Starting to scan results...
+2025-12-14 16:13:27,034 - INFO - [AdViolationMonitor] - Finished. Total ads found: 0
+2025-12-14 16:13:27,034 - INFO - [AdViolationMonitor] - No data to save.
+2025-12-14 16:13:41,932 - INFO - [WDM] - ====== WebDriver manager ======
+2025-12-14 16:13:43,644 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 16:13:43,916 - INFO - [WDM] - Get LATEST chromedriver version for google-chrome
+2025-12-14 16:13:44,330 - INFO - [WDM] - Driver [C:\Users\PC_ASUS\.wdm\drivers\chromedriver\win64\134.0.6998.165\chromedriver-win32/chromedriver.exe] found in cache
+2025-12-14 16:13:48,676 - INFO - [AdViolationMonitor] - Step 1: Trying to open 'Ad Category' menu...
+2025-12-14 16:13:51,878 - INFO - [AdViolationMonitor] - Step 2: Selecting 'All Ads'...
+2025-12-14 16:13:53,619 - INFO - [AdViolationMonitor] - Step 3: Searching for 'cam kết chữa khỏi'...
+2025-12-14 16:13:54,591 - INFO - [AdViolationMonitor] - Waiting 7s for results to load...
+2025-12-14 16:14:01,592 - INFO - [AdViolationMonitor] - Starting to scan results...
+2025-12-14 16:14:13,591 - INFO - [AdViolationMonitor] - Finished. Total ads found: 20
+2025-12-14 16:14:13,816 - INFO - [AdViolationMonitor] - Report saved to murata_violation_report.xlsx
