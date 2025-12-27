@@ -1,83 +1,24 @@
-import subprocess
-import json
-import os
-import glob
-from datetime import datetime
+import pandas as pd
 
-KEYWORDS = [
-    "không tái phát",
-    "chữa khỏi 100%",
-    "cam kết khỏi bệnh",
-    "thuốc gia truyền khỏi hẳn"
-]
+def json_to_csv_pandas(json_file_path, csv_file_path):
+    """
+    Chuyển đổi tệp JSON thành tệp CSV bằng thư viện Pandas.
+    """
+    try:
+        # 1. Đọc tệp JSON trực tiếp vào DataFrame (cấu trúc bảng của Pandas)
+        # read_json() là hàm rất mạnh mẽ của Pandas
+        df = pd.read_json(json_file_path)
 
-BASE_DIR = "yt_shorts_data"
-OUTPUT_FILE = "youtube_shorts_vn_misinfo.json"
+        # 2. Ghi DataFrame ra tệp CSV
+        # index=False để không ghi số thứ tự hàng của Pandas vào CSV
+        df.to_csv(csv_file_path, index=False, encoding='utf-8')
 
-os.makedirs(BASE_DIR, exist_ok=True)
+        print(f"✅ Chuyển đổi thành công với Pandas! Dữ liệu đã được lưu vào: {csv_file_path}")
 
-def crawl_keyword(keyword):
-    safe_kw = keyword.replace(" ", "_")
-    out_dir = os.path.join(BASE_DIR, safe_kw)
-    os.makedirs(out_dir, exist_ok=True)
+    except Exception as e:
+        print(f"Đã xảy ra lỗi: {e}")
 
-    cmd = [
-        "yt-dlp",
-        f"ytsearch50:{keyword}",
-        "--skip-download",
-        "--write-info-json",
-        "--no-warnings",
-        "--match-filter", "duration < 60",
-        "-o", f"{out_dir}/%(id)s.%(ext)s"
-    ]
 
-    subprocess.run(cmd, check=True)
-
-dataset = []
-
-# 🔥 Crawl
-for kw in KEYWORDS:
-    print(f"[+] Crawling keyword: {kw}")
-    crawl_keyword(kw)
-
-# 🔥 Parse metadata
-for kw_dir in os.listdir(BASE_DIR):
-    dir_path = os.path.join(BASE_DIR, kw_dir)
-    if not os.path.isdir(dir_path):
-        continue
-
-    keyword = kw_dir.replace("_", " ")
-
-    for info_file in glob.glob(f"{dir_path}/*.info.json"):
-        with open(info_file, "r", encoding="utf-8") as f:
-            info = json.load(f)
-
-        upload_date = info.get("upload_date")
-        if upload_date:
-            upload_date = datetime.strptime(
-                upload_date, "%Y%m%d"
-            ).strftime("%Y-%m-%d")
-
-        dataset.append({
-            "platform": "youtube",
-            "type": "shorts",
-            "keyword": keyword,
-            "video_id": info.get("id"),
-            "title": info.get("title"),
-            "description": info.get("description"),
-            "upload_date": upload_date,
-            "channel_name": info.get("channel"),
-            "channel_id": info.get("channel_id"),
-            "uploader_id": info.get("uploader_id"),
-            "duration": info.get("duration"),
-            "view_count": info.get("view_count"),
-            "url": info.get("webpage_url"),
-            "label": "medical_misinformation"
-        })
-
-with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-    json.dump(dataset, f, ensure_ascii=False, indent=2)
-
-print("✅ DONE")
-print("Total shorts:", len(dataset))
-print("Saved to:", OUTPUT_FILE)
+# --- CÁCH SỬ DỤNG VÀ THỬ NGHIỆM ---
+# Sử dụng tệp 'data.json' đã tạo ở Ví dụ 1
+json_to_csv_pandas('tiktok-cancer.json', 'tiktok-cancer.csv')
