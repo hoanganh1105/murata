@@ -5,7 +5,7 @@ import os
 # --- CẤU HÌNH ---
 KEYWORD = "Cam kết 100%"      # Từ khóa
 MAX_LINKS = 10      # Số link cần lấy
-OUTPUT_FILE = 'input_links_tiktok.txt' 
+OUTPUT_FILE = 'tiktok_link.txt' 
 
 def get_tiktok_links_drission(keyword, max_count):
     print(f"🚀 Khởi động DrissionPage tìm kiếm: {keyword}")

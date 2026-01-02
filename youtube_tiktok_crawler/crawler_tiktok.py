@@ -9,7 +9,7 @@ import re
 import requests 
 
 # --- CẤU HÌNH ---
-INPUT_FILE = 'input_links_tiktok.txt'
+INPUT_FILE = 'tiktok_link.txt'
 OUTPUT_DIR = 'dataset_tiktok'
 FOLDERS = {
     'video': os.path.join(OUTPUT_DIR, 'video'),
