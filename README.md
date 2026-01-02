@@ -10,10 +10,10 @@ Crawl videos (no sound), audios as well as description by powerful tools such as
 
 
 ## Instruction
-File ffmpeg.exe a powerful, free, open-source multimedia framework used for handling audio, video, and other media files and streams.
+File ffmpeg.exe a powerful, free, open-source multimedia framework used for handling audio, video, and other media files and streams.<br>
 **1.**: 
 In folder **youtube_tiktok_crawler**, there are 4 files to get links and crawl videos on TikTok, Youtube.<br>
-Extract links videos into link_tiktok.txt
+**2.**:Extract links videos into link_tiktok.txt
 
 I am still learning and exploring to find my research interests.  
 I love collaborating, sharing knowledge, and learning from others in the community.  
