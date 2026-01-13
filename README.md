@@ -12,10 +12,6 @@ Crawl videos (no sound), audios as well as description by powerful tools such as
 # Instruction
 **File ffmpeg.exe a powerful, free, open-source multimedia framework used for handling audio, video, and other media files and streams.**<br><br>
 **DrissionPage is a powerful, Python-based web automation tool that integrates the convenience of browser automation**<br><br>
-**1**: 
-In folder **youtube_tiktok_crawler**, there are 4 files to get links and crawl videos on TikTok, Youtube.<br>
-**2**:Extract links videos into link_tiktok.txt <br>
-**3**: In **crawler_tiktok.py**, starting crawling, similar to Youtube (using **yt-dlp**).<br><br>
 **Note**: ffmpeg.exe is included in folder **bin**.
 ## How to download ffmpeg.exe:
 Since FFmpeg does not provide an official installer, you must download pre-compiled binaries for Windows.
