@@ -42,3 +42,7 @@ This crucial step allows you to execute the `ffmpeg` command from any terminal o
     * Under **System variables**, select the **`Path`** variable and click **"Edit..."**.
     * Click **"New"** and paste the copied path (`C:\ffmpeg\bin`).
     * Click **OK** on all windows to save the changes.
+## Subtitle for filtering:
+** All necessary files were included in **youtube_short**
+** Note: 
+   
