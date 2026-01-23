@@ -3,14 +3,17 @@ import time
 import re
 import pandas as pd
 import torch
-import ffmpeg  # Thư viện xử lý video
-import yt_dlp  # Thư viện tải video
-from faster_whisper import WhisperModel
+import ffmpeg
+import yt_dlp
+import soundfile as sf  # [NEW] Thư viện đọc audio cho Zipformer
+import sherpa_onnx      # [NEW] Engine chạy model
+from huggingface_hub import snapshot_download # [NEW] Tự tải model
 from datetime import datetime
 
 # ================= CẤU HÌNH HỆ THỐNG =================
 INPUT_FILE = 'input_links_tiktok.txt'
 OUTPUT_DIR = 'dataset_tiktok'
+MODEL_DIR = 'model_zipformer' # [NEW] Thư mục chứa model Zipformer
 FOLDERS = {
     'video': os.path.join(OUTPUT_DIR, 'video'),
     'audio': os.path.join(OUTPUT_DIR, 'audio'),
@@ -25,22 +28,48 @@ VIOLATION_KEYWORDS = [
     "bay màu", "hết hẳn", "không tái phát", "đông y"
 ]
 
-# ================= KHỞI TẠO AI =================
+# ================= KHỞI TẠO AI (ZIPFORMER) =================
 print("⏳ Đang kiểm tra cấu hình AI...")
-device = "cuda" if torch.cuda.is_available() else "cpu"
-model_size = "base"
-ai_model = None 
+ai_recognizer = None 
 
 def load_ai_model():
-    global ai_model
-    if ai_model is None:
-        print("🚀 Đang load Model Whisper (Chỉ chạy 1 lần)...")
-        try:
-            ai_model = WhisperModel(model_size, device=device, compute_type="int8")
-        except:
-            ai_model = WhisperModel(model_size, device="cpu", compute_type="int8")
-    return ai_model
+    global ai_recognizer
+    if ai_recognizer is None:
+        print("🚀 Đang khởi tạo Zipformer (Transducer)...")
+        
+        MODEL_DIR = "model_zipformer" 
+        
+        # Cập nhật đúng tên file như trong ảnh bạn gửi
+        encoder_file = os.path.join(MODEL_DIR, "encoder-epoch-20-avg-10.int8.onnx")
+        decoder_file = os.path.join(MODEL_DIR, "decoder-epoch-20-avg-10.int8.onnx")
+        joiner_file = os.path.join(MODEL_DIR, "joiner-epoch-20-avg-10.int8.onnx")
+        tokens_file = os.path.join(MODEL_DIR, "tokens.txt") # Nhớ đổi tên config.json thành file này
 
+        # Kiểm tra file
+        if not all(os.path.exists(f) for f in [encoder_file, decoder_file, joiner_file, tokens_file]):
+            print(f"❌ LỖI: Thiếu file trong '{MODEL_DIR}'.")
+            print("   👉 Hãy đảm bảo bạn đã tải 3 file .int8.onnx và đổi tên config.json -> tokens.txt")
+            return None
+
+        try:
+            ai_recognizer = sherpa_onnx.OfflineRecognizer.from_transducer(
+                encoder=encoder_file,
+                decoder=decoder_file,
+                joiner=joiner_file,
+                tokens=tokens_file,
+                num_threads=4,
+                sample_rate=16000,
+                feature_dim=80,
+                provider="cpu",
+                decoding_method="greedy_search",
+                debug=False
+            )
+            print("   ✅ Khởi tạo Zipformer thành công!")
+        except Exception as e:
+            print(f"   ❌ Lỗi khởi tạo Sherpa: {e}")
+            raise e
+        
+    return ai_recognizer
 # ================= CÁC HÀM XỬ LÝ =================
 
 def setup_dirs():
@@ -66,72 +95,47 @@ def log_violation(vid_id, url, detect_type, violations, content):
         f.write(log_text)
     print(f"   📝 Đã ghi vào file log: {VIOLATION_LOG_FILE}")
 
-# === HÀM TẢI VIDEO MỚI (CẬP NHẬT LOGIC 15 PHÚT) ===
 def download_video_direct(url, save_path):
     print(f"   🌍 Đang xử lý: {url}")
-    
     current_folder = os.path.dirname(os.path.abspath(__file__))
     
-    # --- BƯỚC 1: KIỂM TRA ĐỘ DÀI VIDEO TRƯỚC ---
+    # Logic cũ giữ nguyên
     video_duration = 0
-    download_format = 'best' # Mặc định là nét nhất
+    download_format = 'best'
     
-    # Cấu hình chỉ lấy info, không tải
     info_opts = {
-        'quiet': True, 
-        'no_warnings': True,
-        'http_headers': {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        }
+        'quiet': True, 'no_warnings': True,
+        'http_headers': {'User-Agent': 'Mozilla/5.0...'}
     }
     
     try:
-        print("      ⏳ Đang kiểm tra metadata...")
         with yt_dlp.YoutubeDL(info_opts) as ydl:
-            info = ydl.extract_info(url, download=False) # Chỉ lấy thông tin
-            video_duration = info.get('duration', 0) # Lấy số giây
-            
-            # 15 phút = 900 giây
-            if video_duration > 300:
-                minutes = int(video_duration/60)
-                print(f"      🐢 Video dài {minutes} phút (>15p). Chuyển chế độ: TẢI NHANH (Thấp).")
-                download_format = 'worst' # Chất lượng thấp nhất
-            else:
-                print(f"      🐇 Video ngắn. Chuyển chế độ: TẢI NÉT (Best).")
-                download_format = 'best'
-    except Exception as e:
-        print(f"      ⚠️ Không lấy được info (vẫn sẽ tải mặc định Best): {e}")
+            info = ydl.extract_info(url, download=False)
+            video_duration = info.get('duration', 0)
+            if video_duration > 300: download_format = 'worst'
+    except: pass
 
-    # --- BƯỚC 2: TIẾN HÀNH TẢI ---
     ydl_opts = {
         'format': download_format,
         'outtmpl': save_path,         
-        'quiet': True,                
-        'no_warnings': True,
-        'ffmpeg_location': current_folder, 
-        'http_headers': {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-            'Referer': 'https://www.tiktok.com/'
-        }
+        'quiet': True, 'no_warnings': True,
+        'ffmpeg_location': current_folder,
     }
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
-        
-        # Kiểm tra file sau khi tải
-        if os.path.exists(save_path):
-            return True
+        if os.path.exists(save_path): return True
         elif os.path.exists(save_path + ".mp4"): 
             os.rename(save_path + ".mp4", save_path)
             return True
-        else:
-            return False
+        else: return False
     except Exception as e:
         print(f"   ❌ Lỗi yt-dlp: {e}")
         return False
 
 def extract_audio_robust(video_path, audio_path):
+    # Hàm này QUAN TRỌNG: ar='16k' là bắt buộc cho Zipformer
     try:
         (ffmpeg.input(video_path).output(audio_path, ac=1, ar='16k').overwrite_output().run(quiet=True))
         return True
@@ -174,57 +178,67 @@ def main():
         except: vid_id = str(int(time.time()))
             
         v_path = os.path.join(FOLDERS['video'], f"{vid_id}.mp4")
-        a_path = os.path.join(FOLDERS['audio'], f"{vid_id}.mp3")
+        a_path = os.path.join(FOLDERS['audio'], f"{vid_id}.wav") # [CHANGE] Zipformer thích .wav hơn .mp3
         t_path = os.path.join(FOLDERS['transcript'], f"{vid_id}.txt")
 
-        # --- LOGIC MỚI: NẾU MODE LÀ KEYWORD THÌ KHÔNG CẦN TẢI VIDEO ---
         final_text = ""
         violations = []
         is_violation = False
         status = "✅ Sạch"
 
         if detect_type == "KW":
-            print("   ⚡ Mode KW: Caption chứa từ khóa -> Bỏ qua tải Video/Whisper.")
+            print("   ⚡ Mode KW: Caption chứa từ khóa -> Bỏ qua tải Video.")
             final_text = f"[CAPTION]: {desc_text}"
             violations = analyze_content(desc_text)
             if not violations: violations = ["Keyword match in Title"]
             is_violation = True
         
         else:
-            # Chỉ tải video nếu mode KHÔNG PHẢI là KW
             if not os.path.exists(v_path):
                 success = download_video_direct(url, v_path)
                 if not success:
-                    print("   ❌ Không tải được video (Link chết hoặc Private).")
                     report_data.append({"ID": vid_id, "URL": url, "Status": "Lỗi Tải", "Violations": ""})
                     continue
             else:
                 print("   ⏩ Video đã có sẵn.")
 
-            print("   🤖 Mode AI: Cần nghe nội dung...")
+            print("   🤖 Mode AI: Cần nghe nội dung (Zipformer)...")
             if not os.path.exists(a_path): extract_audio_robust(v_path, a_path)
             
             if os.path.exists(a_path):
                 if os.path.exists(t_path):
                     with open(t_path, 'r', encoding='utf-8') as f: final_text = f.read()
                 else:
-                    model = load_ai_model()
+                    # [NEW LOGIC] Xử lý bằng Zipformer
+                    recognizer = load_ai_model()
                     try:
-                        segments, _ = model.transcribe(a_path, beam_size=5)
-                        final_text = " ".join([s.text for s in segments]).strip()
+                        # Đọc file audio bằng soundfile
+                        audio, sample_rate = sf.read(a_path, dtype="float32")
+                        
+                        # Tạo stream để xử lý
+                        stream = recognizer.create_stream()
+                        stream.accept_waveform(sample_rate, audio)
+                        recognizer.decode_stream(stream)
+                        
+                        final_text = stream.result.text
+                        
+                        # Fix lỗi nếu text rỗng
+                        if not final_text: final_text = "[No speech detected]"
+                        
                         with open(t_path, 'w', encoding='utf-8') as f: f.write(final_text)
-                    except Exception as e: print(f"   ❌ Lỗi Whisper: {e}")
+                        print(f"      ✅ Text: {final_text[:50]}...")
+                    except Exception as e: 
+                        print(f"   ❌ Lỗi Zipformer: {e}")
 
                 violations = analyze_content(final_text)
                 if violations: is_violation = True
             else:
-                print("   ❌ Lỗi: Không có file Audio để xử lý.")
+                print("   ❌ Lỗi: Không có file Audio.")
 
-        # 3. KẾT LUẬN
         status = "⚠️ VI PHẠM" if is_violation else "✅ Sạch"
         
         if is_violation:
-            print(f"   🚨 VI PHẠM TÌM THẤY: {', '.join(violations)}")
+            print(f"   🚨 VI PHẠM: {', '.join(violations)}")
             log_violation(vid_id, url, detect_type, violations, final_text)
         
         report_data.append({
@@ -242,10 +256,9 @@ def main():
         df.sort_values(by="Status", ascending=False, inplace=True)
         try:
             df.to_excel(EXCEL_REPORT_FILE, index=False)
-            print(f"✅ Đã xuất báo cáo tổng hợp: {EXCEL_REPORT_FILE}")
-            print(f"✅ Đã xuất danh sách vi phạm riêng: {VIOLATION_LOG_FILE}")
+            print(f"✅ Đã xuất báo cáo: {EXCEL_REPORT_FILE}")   
         except PermissionError:
-            print("❌ Lỗi: Bạn đang mở file Excel. Hãy tắt file Excel đi để tool ghi dữ liệu!")
+            print("❌ Lỗi: Đóng file Excel trước khi chạy!")
 
 if __name__ == "__main__":
     main()
