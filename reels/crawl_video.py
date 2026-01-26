@@ -1,95 +1,128 @@
-import os, time, requests, urllib.parse
-from concurrent.futures import ThreadPoolExecutor
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+import os
+import gc
+import re
+import time
+import pandas as pd
+import numpy as np
+import subprocess
+import sherpa_onnx
+import threading
+from datetime import datetime
 
-# --- CẤU HÌNH ---
-KEYWORD = "mỹ phẩm"
-SCROLL_COUNT = 5
-FOLDER = "ads_high_speed"
-MAX_WORKERS = 10  # Số lượng video tải cùng lúc (Tăng tốc nằm ở đây)
+# ================= CẤU HÌNH =================
+VIDEO_DIR = 'dataset_reels_final/videos'
+MODEL_DIR = 'tiktok-crawler/model_zipformer'
+OUTPUT_EXCEL = 'dataset_reels_final/Ket_Qua_AI_Text.xlsx'
 
-def download_task(v_url, sub_text, count):
-    """Hàm xử lý tải file chạy trong thread riêng"""
+# TỪ KHÓA VI PHẠM
+VIOLATION_KEYWORDS = [
+    "cam kết 100%", "trị dứt điểm", "hoàn tiền", "khỏi ngay", 
+    "nhà tôi ba đời", "điều trị tận gốc", "thần dược", "sạch nám", 
+    "vẩy nến", "hết hẳn", "không tái phát", "đông y"
+]
+
+# ================= KHỞI TẠO AI (SINGLETON) =================
+ai_recognizer = None
+
+def load_ai_model():
+    global ai_recognizer
+    if ai_recognizer is None:
+        print("🧠 Đang nạp Model Zipformer (Cấu hình tiết kiệm RAM)...")
+        ai_recognizer = sherpa_onnx.OfflineRecognizer.from_transducer(
+            encoder=os.path.join(MODEL_DIR, "encoder-epoch-20-avg-10.int8.onnx"),
+            decoder=os.path.join(MODEL_DIR, "decoder-epoch-20-avg-10.int8.onnx"),
+            joiner=os.path.join(MODEL_DIR, "joiner-epoch-20-avg-10.int8.onnx"),
+            tokens=os.path.join(MODEL_DIR, "tokens.txt"),
+            num_threads=2, # Giữ 2 threads để máy không bị đứng khi AI chạy
+            sample_rate=16000,
+            feature_dim=80,
+            provider="cpu"
+        )
+    return ai_recognizer
+
+# ================= XỬ LÝ ÂM THANH CHUNKING =================
+def transcribe_video(file_path):
+    recognizer = load_ai_model()
+    
+    # Dùng FFmpeg bốc Audio ra (Ép về 16kHz đơn kênh)
+    cmd = [
+        'ffmpeg', '-threads', '1', '-i', file_path, 
+        '-f', 's16le', '-acodec', 'pcm_s16le', 
+        '-ac', '1', '-ar', '16000', '-'
+    ]
+    
     try:
-        video_path = f"{FOLDER}/ad_{count}.mp4"
-        text_path = f"{FOLDER}/ad_{count}.txt"
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+        raw_audio, _ = proc.communicate()
         
-        # Tải video/audio
-        clean_url = v_url.replace("&amp;", "&")
-        response = requests.get(clean_url, timeout=30)
+        if not raw_audio:
+            return ""
+
+        # Chuyển đổi sang mảng float32
+        samples = np.frombuffer(raw_audio, dtype=np.int16).astype(np.float32) / 32768.0
         
-        if response.status_code == 200:
-            with open(video_path, "wb") as f:
-                f.write(response.content)
-            with open(text_path, "w", encoding="utf-8") as f:
-                f.write(sub_text)
-            print(f"✅ Đã xong bộ {count}")
+        # Tạo stream và nạp dữ liệu theo CHUNK để tránh OOM
+        stream = recognizer.create_stream()
+        chunk_size = 16000 * 10 # Mỗi lần nạp 10 giây âm thanh
+        
+        for i in range(0, len(samples), chunk_size):
+            chunk = samples[i : i + chunk_size]
+            stream.accept_waveform(16000, chunk.tolist())
+        
+        recognizer.decode_stream(stream)
+        text = stream.result.text.strip().lower()
+        
+        # Giải phóng bộ nhớ ngay lập tức
+        del stream, samples, raw_audio
+        gc.collect()
+        
+        return text
     except Exception as e:
-        print(f"❌ Lỗi bộ {count}: {e}")
+        print(f"❌ Lỗi AI tại file {file_path}: {e}")
+        return ""
 
-def crawl_high_speed(keyword):
-    if not os.path.exists(FOLDER): os.makedirs(FOLDER)
+# ================= HÀM CHÍNH =================
+def main():
+    if not os.path.exists(VIDEO_DIR):
+        print(f"❌ Folder video '{VIDEO_DIR}' không tồn tại!")
+        return
 
-    options = Options()
-    options.add_argument("--headless") # Chạy ẩn cho nhanh
-    options.add_argument("window-size=1920,1080")
+    # Lấy danh sách video trong folder
+    video_files = [f for f in os.listdir(VIDEO_DIR) if f.endswith('.mp4')]
+    print(f"📂 Tìm thấy {len(video_files)} video. Bắt đầu quét text...")
+
+    results = []
     
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-    wait = WebDriverWait(driver, 10)
-    
-    q = urllib.parse.quote(keyword)
-    url = f"https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q={q}&country=VN&media_type=video"
-
-    seen_videos = set()
-    tasks = []
-    count = 0
-
-    try:
-        print(f"🚀 Khởi động luồng tải siêu tốc cho từ khóa: {keyword}")
-        driver.get(url)
+    for i, filename in enumerate(video_files):
+        file_path = os.path.join(VIDEO_DIR, filename)
+        print(f"🎙️ [{i+1}/{len(video_files)}] Đang nghe: {filename}")
         
-        # Dùng ThreadPool để quản lý việc tải
-        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-            for i in range(SCROLL_COUNT):
-                wait.until(EC.presence_of_element_located((By.XPATH, "//div[contains(@class, 'xh8yej3')]")))
-                cards = driver.find_elements(By.XPATH, "//div[contains(@class, 'xh8yej3')]")
-                
-                for card in cards:
-                    try:
-                        video_tag = card.find_element(By.TAG_NAME, "video")
-                        v_url = video_tag.get_attribute("src")
-                        
-                        if v_url and v_url not in seen_videos and not v_url.startswith("blob:"):
-                            seen_videos.add(v_url)
-                            count += 1
-                            
-                            # Lấy text nhanh
-                            try:
-                                sub_text = card.find_element(By.XPATH, ".//div[@style='white-space: pre-wrap;']").text
-                            except:
-                                sub_text = "No Sub"
+        # Gọi AI nghe
+        content = transcribe_video(file_path)
+        
+        # Kiểm tra vi phạm
+        violations = [kw for kw in VIOLATION_KEYWORDS if kw in content]
+        status = "⚠️ VI PHẠM" if violations else "✅ SẠCH"
+        
+        results.append({
+            "File": filename,
+            "Trạng Thái": status,
+            "Vi Phạm": ", ".join(violations),
+            "Nội Dung": content
+        })
+        
+        # Log nhanh ra màn hình
+        if violations:
+            print(f"   🚨 Phát hiện: {', '.join(violations)}")
 
-                            # Đẩy việc tải vào hàng chờ đa luồng (Không đợi tải xong mới cuộn tiếp)
-                            executor.submit(download_task, v_url, sub_text, count)
-                            
-                    except: continue
+        # Lưu dự phòng mỗi 10 video
+        if (i + 1) % 10 == 0:
+            pd.DataFrame(results).to_excel(OUTPUT_EXCEL, index=False)
+            print(f"💾 Đã lưu dự phòng {i+1} video...")
 
-                # Cuộn xuống để load thêm card mới
-                driver.execute_script("window.scrollBy(0, 3000);")
-                print(f"⬇️ Đang cuộn trang lần {i+1}...")
-                time.sleep(3) 
-
-    finally:
-        driver.quit()
-        print(f"\n⚡ Đã gửi toàn bộ lệnh tải. Đang chờ các luồng hoàn tất...")
+    # Lưu kết quả cuối cùng
+    pd.DataFrame(results).to_excel(OUTPUT_EXCEL, index=False)
+    print(f"\n✨ HOÀN THÀNH! Kết quả lưu tại: {OUTPUT_EXCEL}")
 
 if __name__ == "__main__":
-    start_time = time.time()
-    crawl_high_speed(KEYWORD)
-    print(f"⏱️ Tổng thời gian: {time.time() - start_time:.2f} giây")
+    main()
