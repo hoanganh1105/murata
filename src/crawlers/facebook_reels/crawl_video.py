@@ -1,112 +1,159 @@
 import os
-import gc
-import sys
-import pandas as pd
-import numpy as np
-import subprocess
-import sherpa_onnx
+import time
+from yt_dlp import YoutubeDL
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from webdriver_manager.chrome import ChromeDriverManager
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
-from utils.logger import setup_logger
+# --- CẤU HÌNH ---
+FB_EMAIL = "0909337419"
+FB_PASS = "Khoa150207"
 
-logger = setup_logger('facebook_reels_transcribe')
+TARGET_LIST = [
+    "https://www.facebook.com/profile.php?id=61585278802454&sk=reels_tab",
+    "https://www.facebook.com/profile.php?id=61585140699619&sk=reels_tab",
+    "https://www.facebook.com/profile.php?id=61582176007959&sk=reels_tab",
+]
 
-DEFAULT_VIDEO_DIR = 'data/raw/facebook_reels/videos'
-MODEL_DIR = 'models/zipformer'
-DEFAULT_OUTPUT_DIR = 'data/raw/facebook_reels'
+DOWNLOAD_DIR = "fb_reels_dataset"
+COOKIE_FILE = "www.facebook.com_cookies (1).txt" 
 
-ai_recognizer = None
+if not os.path.exists(DOWNLOAD_DIR):
+    os.makedirs(DOWNLOAD_DIR)
 
-def load_ai_model():
-    global ai_recognizer
-    if ai_recognizer is None:
-        logger.info("Loading AI model...")
-        ai_recognizer = sherpa_onnx.OfflineRecognizer.from_transducer(
-            encoder=os.path.join(MODEL_DIR, "encoder-epoch-20-avg-10.int8.onnx"),
-            decoder=os.path.join(MODEL_DIR, "decoder-epoch-20-avg-10.int8.onnx"),
-            joiner=os.path.join(MODEL_DIR, "joiner-epoch-20-avg-10.int8.onnx"),
-            tokens=os.path.join(MODEL_DIR, "tokens.txt"),
-            num_threads=2,
-            sample_rate=16000,
-            feature_dim=80,
-            provider="cpu"
-        )
-        logger.info("AI model loaded successfully")
-    return ai_recognizer
+# Cấu hình tải video
+ydl_opts = {
+    'format': 'bestvideo+bestaudio/best',
+    'outtmpl': f'{DOWNLOAD_DIR}/%(id)s.%(ext)s',
+    'quiet': True,
+    'no_warnings': True,
+    'merge_output_format': 'mp4',
+    'cookiefile': COOKIE_FILE 
+}
 
-def transcribe_video(file_path):
-    recognizer = load_ai_model()
-    
-    cmd = [
-        'ffmpeg', '-threads', '1', '-i', file_path,
-        '-f', 's16le', '-acodec', 'pcm_s16le',
-        '-ac', '1', '-ar', '16000', '-'
-    ]
-    
+# Khởi tạo Driver
+chrome_options = Options()
+chrome_options.add_argument("--disable-notifications")
+chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36")
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+
+def load_cookies_from_txt(file_path):
+    cookies = []
+    if not os.path.exists(file_path):
+        print(f"❌ Không tìm thấy file: {file_path}")
+        return cookies
+    with open(file_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            if not line.startswith('#') and line.strip():
+                parts = line.strip().split('\t')
+                if len(parts) >= 7:
+                    cookie = {
+                        'domain': parts[0] if parts[0].startswith('.') else f".{parts[0]}",
+                        'name': parts[5],
+                        'value': parts[6],
+                        'path': parts[2],
+                        'secure': parts[3].upper() == 'TRUE'
+                    }
+                    cookies.append(cookie)
+    return cookies
+
+def login_with_cookies():
+    print(f"🍪 Đang nạp Cookie từ {COOKIE_FILE}...")
+    driver.get("https://www.facebook.com")
+    time.sleep(3)
+    cookies = load_cookies_from_txt(COOKIE_FILE)
+    if not cookies: return False
+    for cookie in cookies:
+        try:
+            driver.add_cookie(cookie)
+        except: continue
+    driver.refresh()
+    time.sleep(5)
+    return True
+
+def download_video(url):
+    start_time = time.time()
     try:
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-        raw_audio, _ = proc.communicate()
-        
-        if not raw_audio:
-            return ""
-
-        samples = np.frombuffer(raw_audio, dtype=np.int16).astype(np.float32) / 32768.0
-        
-        stream = recognizer.create_stream()
-        chunk_size = 16000 * 10
-        
-        for i in range(0, len(samples), chunk_size):
-            chunk = samples[i : i + chunk_size]
-            stream.accept_waveform(16000, chunk.tolist())
-        
-        recognizer.decode_stream(stream)
-        text = stream.result.text.strip().lower()
-        
-        del stream, samples, raw_audio
-        gc.collect()
-        
-        return text
+        with YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+        elapsed = time.time() - start_time
+        return True, elapsed
     except Exception as e:
-        logger.error(f"Error transcribing {file_path}: {e}")
-        return ""
+        print(f"⚠️ Lỗi tải {url}: {e}")
+        return False, 0
 
-def main(video_dir=None, output_dir=None):
-    video_dir = video_dir or DEFAULT_VIDEO_DIR
-    output_dir = output_dir or DEFAULT_OUTPUT_DIR
-    output_excel = os.path.join(output_dir, 'transcripts.xlsx')
-    
-    if not os.path.exists(video_dir):
-        logger.error(f"Video folder not found: {video_dir}")
-        return
+def crawl_target(url):
+    print(f"\n🚀 ĐANG XỬ LÝ TRANG: {url}")
+    driver.get(url)
+    time.sleep(10) # Đợi trang Reels load hẳn
 
-    video_files = [f for f in os.listdir(video_dir) if f.endswith('.mp4')]
-    logger.info(f"Found {len(video_files)} videos in {video_dir}")
+    downloaded_links = set()
+    session_times = []
+    retry_count = 0
+    max_retries = 5 # Số lần cuộn thử nếu không thấy video mới
 
-    results = []
-    success_count = 0
-    
-    for i, filename in enumerate(video_files):
-        file_path = os.path.join(video_dir, filename)
-        logger.info(f"[{i+1}/{len(video_files)}] Processing: {filename}")
+    while True:
+        # Tìm link bằng XPath chuyên dụng cho Reels
+        elements = driver.find_elements(By.XPATH, "//a[contains(@href, '/reel/') or contains(@href, '/reels/')]")
         
-        content = transcribe_video(file_path)
-        
-        results.append({
-            "File": filename,
-            "Content": content
-        })
-        
-        if content:
-            success_count += 1
+        new_found_count = 0
+        for elem in elements:
+            try:
+                link = elem.get_attribute("href")
+                if link:
+                    clean_link = link.split('?')[0].split('&')[0]
+                    if clean_link not in downloaded_links:
+                        print(f"📥 Đang tải: {clean_link}")
+                        success, duration = download_video(clean_link)
+                        if success:
+                            downloaded_links.add(clean_link)
+                            session_times.append(duration)
+                            new_found_count += 1
+                            print(f"⏱️ Xong trong: {duration:.2f}s")
+            except: continue
 
-        if (i + 1) % 10 == 0:
-            os.makedirs(output_dir, exist_ok=True)
-            pd.DataFrame(results).to_excel(output_excel, index=False)
-            logger.info(f"Backup saved: {i+1} videos...")
+        # Cơ chế cuộn ép load dữ liệu
+        last_height = driver.execute_script("return document.body.scrollHeight")
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(3)
+        # Nhích nhẹ lên để kích hoạt trigger load của Facebook
+        driver.execute_script("window.scrollBy(0, -500);")
+        time.sleep(2)
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(5) # Đợi load video mới
 
-    os.makedirs(output_dir, exist_ok=True)
-    pd.DataFrame(results).to_excel(output_excel, index=False)
-    logger.info(f"Done! Success: {success_count}/{len(video_files)}, Output: {output_excel}")
+        new_height = driver.execute_script("return document.body.scrollHeight")
+
+        # Kiểm tra điều kiện dừng
+        if new_height == last_height and new_found_count == 0:
+            retry_count += 1
+            print(f"🔄 Không thấy video mới, thử lại lần {retry_count}/{max_retries}...")
+            if retry_count >= max_retries:
+                print(f"🏁 Đã quét cạn kiệt hoặc Facebook dừng load thêm.")
+                break
+        else:
+            retry_count = 0 # Reset nếu vẫn đang load tốt
+
+    # Thống kê sau khi xong 1 trang
+    if session_times:
+        avg = sum(session_times) / len(session_times)
+        print(f"\n--- 📊 THỐNG KÊ TRANG ---")
+        print(f"✅ Đã tải: {len(session_times)} videos")
+        print(f"⏳ Trung bình: {avg:.2f} giây/video")
+        print(f"------------------------\n")
 
 if __name__ == "__main__":
-    main()
+    try:
+        start_program = time.time()
+        if login_with_cookies():
+            for link in TARGET_LIST:
+                crawl_target(link)
+                print("☕ Nghỉ 15s tránh bị Facebook quét...")
+                time.sleep(15)
+        
+        end_program = time.time()
+        print(f"✨ HOÀN THÀNH! Tổng tgian: {(end_program - start_program)/60:.2f} phút.")
+    finally:
+        driver.quit()

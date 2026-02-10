@@ -29,7 +29,7 @@ def get_50_videos(query):
         'q': query,
         'type': 'video',
         'videoDuration': 'short',
-        'maxResults': 50,
+        'maxResults': 100,
         'key': API_KEY
     }
     
