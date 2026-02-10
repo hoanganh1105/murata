@@ -8,8 +8,8 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
 # --- CẤU HÌNH ---
-FB_EMAIL = "0909337419"
-FB_PASS = "Khoa150207"
+FB_EMAIL = ""
+FB_PASS = ""
 
 TARGET_LIST = [
     "https://www.facebook.com/profile.php?id=61585278802454&sk=reels_tab",
