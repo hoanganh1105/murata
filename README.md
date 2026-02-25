@@ -49,8 +49,7 @@ This crucial step allows you to execute the `ffmpeg` command from any terminal o
 
 * By using model Zipformer, we can extract audios in each video and convert into .txt files. You can accessing the model at the bottom of this page.
 
-**Path:**('src\crawlers\facebook_reels\crawl_keyword.py').
-**Note:** You can see our progress in 'process_log.csv'.
+
 2.  **Step-by-step**
     * Authentication: Utilizes existing browser profiles (Cookies/Session Storage) to maintain login states.
     * Apply the mentioned model to extract audios and convert into text, (.mp4 is deleted after being extracted).
