@@ -15,8 +15,8 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
 # --- CẤU HÌNH ---
-FB_EMAIL = "afkkhoaff@gmail.com"
-FB_PASS = "Khoa150207"
+FB_EMAIL = ""
+FB_PASS = ""
 COOKIE_FILE = "www.facebook.com_cookies (1).txt" 
 MODEL_DIR = "model_zipformer"
 DOWNLOAD_DIR = "fb_reels_dataset"
