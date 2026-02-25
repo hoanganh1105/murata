@@ -45,12 +45,12 @@ This crucial step allows you to execute the `ffmpeg` command from any terminal o
 ## Subtitle for filtering:
 ** All necessary files were included in **youtube_short**
 ## Crawl data from Facebook Reels:
-For the outbreak of AI, there are so many videos made by AI for educations in many fields. Nevertheless, there is no scientifically official confirmation for them. These are specific resources for our dataset.
+For the outbreak of AI, there are so many videos on FB reels made by AI for educations in many fields. Nevertheless, there is no scientifically official confirmation for them. These are specific resources for our dataset.
 
 By using model Zipformer, we can extract audios in each video and convert into .txt files. You can accessing the model at the bottom of this page.
 
 ### Step-by-step
-* Click **"Environment Variables..."** at the bottom of the System Properties window.
+    * Click **"Environment Variables..."** at the bottom of the System Properties window.
     * Under **System variables**, select the **`Path`** variable and click **"Edit..."**.
     * Click **"New"** and paste the copied path (`C:\ffmpeg\bin`).
     * Click **OK** on all windows to save the changes.
